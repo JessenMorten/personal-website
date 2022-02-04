@@ -3,6 +3,6 @@ module.exports = {
         siteUrl: `https://www.mortenjessen.dk`,
     },
     plugins: [
-
+        'gatsby-plugin-postcss',
     ]
 }

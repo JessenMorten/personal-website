@@ -1,20 +1,14 @@
 import React, { FC } from "react"
-import { Link } from "gatsby"
+import { PageProps } from "gatsby"
+import { Button, Page } from "../components";
 
-const NotFoundPage: FC = () => {
+const NotFoundPage: FC<PageProps> = (props) => {
+  const path = props.location.pathname;
+
   return (
-    <main>
-      <title>Not found</title>
-      <h1>Page not found</h1>
-      <p>Sorry{" "}
-        <span role="img" aria-label="Pensive emoji">
-          😔
-        </span>{" "}
-        we couldn't find what you were looking for.
-        <br />
-        <Link to="/">Go home</Link>.
-      </p>
-    </main>
+    <Page area="mortenjessen.dk" header="404" subHeader={`The resource at '${path}' page was not found`}>
+      <Button text="Go home" onClick={() => props.navigate("/")} />
+    </Page>
   )
 }
 
