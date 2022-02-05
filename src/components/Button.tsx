@@ -16,7 +16,7 @@ export const Button: FC<ButtonProps> = (props) => {
                 bg-primary-500
                 text-white
                 font-semibold
-                rounded-lg
+                rounded-xl
                 shadow-md
                 hover:bg-primary-600
                 focus:outline-none
