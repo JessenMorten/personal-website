@@ -1,6 +1,6 @@
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { Helmet } from "react-helmet";
-import { ThemeSetting, ActiveTheme, themeService } from "../services/themeService";
+import { themeService, ThemeSetting } from "../services/themeService";
 
 export interface Seo {
     title?: string;
@@ -15,11 +15,6 @@ export interface PageProps {
 }
 
 export const Page: FC<PageProps> = (props) => {
-    const [activeTheme, setActiveTheme] = useState(themeService.getActiveTheme());
-
-    const darkBody = <body className="dark bg-slate-800" />;
-    const lightBody = <body className="bg-slate-100" />;
-
     let title = props.headline;
 
     if (!!props.seo) {
@@ -30,7 +25,6 @@ export const Page: FC<PageProps> = (props) => {
         <div>
             {/* Helmet */}
             <Helmet>
-                {activeTheme === ActiveTheme.Dark ? darkBody : lightBody}
                 <title>{title}</title>
             </Helmet>
 
@@ -49,7 +43,7 @@ export const Page: FC<PageProps> = (props) => {
                                 font-semibold
                                 transition-colors
                                 duration-300"
-                            onClick={() => setActiveTheme(themeService.setThemeSetting(themeSetting as ThemeSetting))}>{themeSetting}</button>
+                            onClick={() => themeService.setThemeSetting(themeSetting as ThemeSetting)}>{themeSetting}</button>
                     ))}
                 </div>
             </header>

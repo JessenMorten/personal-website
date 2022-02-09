@@ -11,11 +11,28 @@ export enum ActiveTheme {
 
 export interface ThemeService {
     getActiveTheme: () => ActiveTheme;
-    setThemeSetting: (themeSetting: ThemeSetting) => ActiveTheme;
+    getThemeSetting: () => ThemeSetting;
+    setThemeSetting: (themeSetting: ThemeSetting) => void;
+    activateTheme: () => void;
 }
 
 export const themeService = ((): ThemeService => {
-    const themeKey = "theme";
+    const themeSettingKey = "ThemeSetting";
+
+    const getThemeSetting = () => {
+        // Return default on serverside render
+        if (typeof window === "undefined") {
+            return ThemeSetting.System;
+        }
+
+        // Check in local storage
+        const localStorageTheme = localStorage.getItem(themeSettingKey);
+        if (Object.keys(ThemeSetting).includes(localStorageTheme)) {
+            return localStorageTheme as ThemeSetting;
+        } else {
+            return ThemeSetting.System;
+        }
+    }
 
     const getActiveTheme = () => {
         // Return default on serverside render
@@ -24,10 +41,10 @@ export const themeService = ((): ThemeService => {
         }
 
         // Check in local storage
-        const localStorageTheme = localStorage.getItem(themeKey);
-        if (localStorageTheme === ThemeSetting.Dark) {
+        const themeSetting = getThemeSetting();
+        if (themeSetting === ThemeSetting.Dark) {
             return ActiveTheme.Dark;
-        } else if (localStorageTheme === ThemeSetting.Light) {
+        } else if (themeSetting === ThemeSetting.Light) {
             return ActiveTheme.Light;
         }
 
@@ -41,12 +58,31 @@ export const themeService = ((): ThemeService => {
     };
 
     const setThemeSetting = (theme: ThemeSetting) => {
-        localStorage.setItem(themeKey, String(theme));
-        return getActiveTheme();
+        if (Object.keys(ThemeSetting).includes(theme)) {
+            localStorage.setItem(themeSettingKey, String(theme));
+        }
+        activateTheme();
+    };
+
+    const activateTheme = () => {
+        if (typeof window === "undefined") {
+            // Cannot set theme during server-side rendering
+            return;
+        }
+
+        const activeTheme = getActiveTheme();
+
+        if (activeTheme === ActiveTheme.Dark) {
+            window.document.body.className = "dark bg-slate-800";
+        } else {
+            window.document.body.className = "bg-slate-100";
+        }
     };
 
     return {
+        setThemeSetting: setThemeSetting,
+        getThemeSetting: getThemeSetting,
         getActiveTheme: getActiveTheme,
-        setThemeSetting: setThemeSetting
+        activateTheme: activateTheme
     };
 })();
