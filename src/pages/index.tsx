@@ -4,9 +4,7 @@ import { Link, Page } from "../components";
 const IndexPage: FC = () => {
   return (
     <Page
-      standfirst="mortenjessen.dk"
       headline="Hi"
-      subhead="..."
       seo={{
         title: "mortenjessen.dk"
       }}>
