@@ -1,3 +1,5 @@
+import { notificationService } from "./notificationService";
+
 export enum ThemeSetting {
     Dark = "Dark",
     Light = "Light",
@@ -60,6 +62,10 @@ export const themeService = ((): ThemeService => {
     const setThemeSetting = (theme: ThemeSetting) => {
         if (Object.keys(ThemeSetting).includes(theme)) {
             localStorage.setItem(themeSettingKey, String(theme));
+            notificationService.success(
+                "Theme saved!",
+                `Theme has been set to '${theme}'`
+            );
         }
         activateTheme();
     };
