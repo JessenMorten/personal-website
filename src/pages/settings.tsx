@@ -11,24 +11,19 @@ const SettingsPage: FC = () => {
     }
 
     return (
-        <Page
-            standfirst="Customize your experience!"
-            headline="Settings"
-            seo={{
-                title: "mortenjessen.dk"
-            }}>
-
+        <Page headline="Settings" standfirst="Customize your experience!">
             <div className="border-slate-400 border-2 rounded-xl p-3">
                 <h2 className="text-xl">Theme</h2>
 
-                {Object.keys(ThemeSetting).map(themeSetting => <div className="mt-3">
-                    <Button
-                        disabled={currentThemeSetting === themeSetting}
-                        key={themeSetting}
-                        text={themeSetting}
-                        onClick={() => changeTheme(themeSetting as ThemeSetting)}
-                    />
-                </div>)}
+                {Object.keys(ThemeSetting).map(themeSetting => (
+                    <div key={themeSetting} className="mt-3">
+                        <Button
+                            disabled={currentThemeSetting === themeSetting}
+                            text={themeSetting}
+                            onClick={() => changeTheme(themeSetting as ThemeSetting)}
+                        />
+                    </div>
+                ))}
             </div>
         </Page>
     )
