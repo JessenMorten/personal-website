@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkpersonal_website=self.webpackChunkpersonal_website||[]).push([[691],{6738:function(e,t,n){n.r(t);var s=n(7294),l=n(5850);t.default=function(){return s.createElement(l.T3,{headline:"Hi",seo:{title:"mortenjessen.dk"}},s.createElement("p",null,s.createElement(l.rU,{to:"/i-told-you-so"},"This page")," does not exist."))}}}]);
-//# sourceMappingURL=component---src-pages-index-tsx-466e67cbcf1d954ae4d2.js.map

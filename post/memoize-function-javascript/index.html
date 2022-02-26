@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en"><head><title>Writing a memoize function in JavaScript - mortenjessen.dk</title><meta name="description" content="Memoizing a function is a great way to optimize your application, but what exactly does memoize mean and when does it make sense to use this approach?"><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/github.min.css"><link rel="stylesheet" href="https://mortenjessen.dk/style.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script><script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script></head><body class="bg-light"><header id="top"><nav class="navbar navbar-light bg-white shadow"><div class="container"><a class="navbar-brand" href="https://mortenjessen.dk">mortenjessen.dk</a><a class="text-decoration-none" href="https://mortenjessen.dk/search">Search</a></div></nav></header><main class="container my-3"><div class="row"><div class="mt-3 col"><div class="card shadow rounded-3 border-0"><div class="card-body category"><h3 class="card-title">Writing a memoize function in JavaScript</h3><h6 class="card-subtitle mb-2 text-muted">JavaScript</h6><p class="card-subtitle mb-2 text-muted">February 25, 2022</p><i><h6 class="card-text">Memoizing a function is a great way to optimize your application, but what exactly does memoize mean and when does it make sense to use this approach?</h6></i><hr><h4>What does memoize mean?</h4><p>Memoization is derived from the Latin word "memorandum" ("to be remembered"),
+and it pretty much tells you everything you need to know, but I'm gonna dig a little deeper anyway.
+A memorized function is a function that stores the returned value of previous calls to the function,
+together with the parameter that was passed to it.</p><p>Right now you might be thinking “that sounds just like caching”..
+and that's exactly what it is! So by caching the previous return values of a function that does
+some heavy computation we can improve the performance of our applications significantly.</p><h4>The "but"</h4><p>Memoization sounds amazing, right? Well yes, but there is a small caveat.
+Memoization should only be used for <a title="What is a pure function?" href="https://mortenjessen.dk/post/pure-function-javascript">pure functions</a>. If you memoize a function
+that has side effects or behaves differently even when identical arguments are passed,
+you might have to deal with some very difficult bugs, that could take hours to track down.<h4>When to use memoization </h4><p>Memoization makes sense to use for a function of it takes a long time to execute and if
+it's called multiple times. You won't gain much by memoizing a function that always
+takes a few milliseconds to execute, just like it doesn't give you any performance
+boost to cache a value that is never going to be retrieved.</p><h4>Implementation</h4><p>In this implementation I used the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify">JSON.stringify() function</a>
+to generate the cache key, which means that the function is generic and doesn't have to
+know which arguments will be passed.</p><pre class="rounded shadow border"><span class="float-left badge bg-secondary">Javascript</span><code class="language-javascript">function memoize(func) {
+    const cache = {};
+ 
+    return function (...arguments) {
+        const key = JSON.stringify(arguments);
+        let value = cache[key];
+ 
+        // Invoke the function if the value wasn't cached,
+        // then store the result in the cache.
+        if (value === undefined) {
+            value = func(...arguments);
+            cache[key] = value;
+        }
+ 
+        return value;
+    }
+}</code></pre><p>Now it's time to memoize an expensive function and demonstrate how it improves performance.
+In the example below I simulate an expensive operation by iterating 1.000.000.000 times in a for loop.</p><pre class="rounded shadow border"><span class="float-left badge bg-secondary">Javascript</span><code class="language-javascript">/**
+ * Adds two numbers very inefficiently.
+ */
+function expensiveOperation(a, b) {
+    for (let i = 0; i < 1_000_000_000; i++) {
+        // ...
+    }
+ 
+    return a + b;
+}
+ 
+// Memoize the function
+const memoizedExpensiveOperation = memoize(expensiveOperation);
+ 
+// First invocation
+console.time("First invocation");
+let result = memoizedExpensiveOperation(2, 2);
+console.timeEnd("First invocation");
+console.log("Result: " + result);
+ 
+// Second invocation
+console.time("Second invocation");
+result = memoizedExpensiveOperation(2, 2);
+console.timeEnd("Second invocation");
+console.log("Result: " + result);
+ 
+// OUTPUT
+//
+// First invocation: 524.512939453125 ms
+// Result: 4
+// Second invocation: 0.00830078125 ms
+// Result: 4</code></pre><p>In this example we managed to save over 500 milliseconds,
+by memoizing the expensive operation.</p><h4>Conclusion</h4><p>So to summarize, memoization is a great approach to improve performance and
+alleviating bottlenecks in specific parts of an application. The function you want to memoize
+has to be a <a title="What is a pure function?" href="https://mortenjessen.dk/post/pure-function-javascript">pure function</a>,
+slow/expensive (that's up for you to define) and the function should be called multiple
+times in order to reap the benefits of caching the previous return values.</p></p></div></div></div></div></main><a class="btn btn-primary rounded-pill position-fixed bottom-0 end-0 m-3" href="#top">To the top</a><script>const BASE_URL = "https://mortenjessen.dk";</script><script src="https://mortenjessen.dk/scripts/main.js"></script></body></html>

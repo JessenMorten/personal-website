@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkpersonal_website=self.webpackChunkpersonal_website||[]).push([[971],{8878:function(e,n,t){t.r(n);var r=t(7294),s=t(5850);n.default=function(){return r.createElement(s.T3,{headline:"Apps"},r.createElement("p",null,"There's nothing here :-("))}}}]);
-//# sourceMappingURL=component---src-pages-apps-tsx-67eeaebbf749ddf69a09.js.map
