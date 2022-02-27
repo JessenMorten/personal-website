@@ -53,13 +53,48 @@ const SearchModule = (() => {
      * @returns Search result element.
      */
     const createResultElement = (post) => {
-        const link = document.createElement("a");
-        link.href = post.url;
-        const div = document.createElement("div");
-        div.classList.add("p-3", "bg-white", "mt-3", "shadow", "rounded");
-        div.textContent = post.title;
-        link.appendChild(div);
-        return link;
+        const column = document.createElement("div");
+        column.className = "mt-3";
+
+        column.appendChild((() => {
+            const anchor = document.createElement("a");
+            anchor.className = "text-decoration-none text-dark";
+            anchor.href = post.url;
+            anchor.appendChild((() => {
+                const card = document.createElement("div");
+                card.className = "feedback shadow rounded bg-white d-flex flex-row align-items-center";
+
+                card.appendChild((() => {
+
+                    card.appendChild((() => {
+                        const thumbnail = document.createElement("img");
+                        thumbnail.className = "small-thumbnail";
+                        thumbnail.src = post.thumbnailUrl;
+                        thumbnail.setAttribute("loading", "lazy");
+                        thumbnail.setAttribute("alt", "thumbnail");
+                        return thumbnail;
+                    })());
+
+                    const div = document.createElement("div");
+                    div.className = "mx-3 my-0";
+                    div.appendChild((() => {
+                        const title = document.createElement("h6");
+                        title.className = "m-0";
+                        title.textContent = post.title;
+
+                        return title;
+                    })());
+
+                    return div;
+                })());
+
+                return card;
+            })());
+
+            return anchor;
+        })());
+
+        return column;
     }
 
     const splitAndIgnoreWords = (str) => {
