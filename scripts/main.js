@@ -56,7 +56,7 @@ const SearchModule = (() => {
         const link = document.createElement("a");
         link.href = post.url;
         const div = document.createElement("div");
-        div.classList.add("p-3", "bg-white", "mt-3", "shadow", "rounded-3");
+        div.classList.add("p-3", "bg-white", "mt-3", "shadow", "rounded");
         div.textContent = post.title;
         link.appendChild(div);
         return link;
@@ -80,7 +80,6 @@ const SearchModule = (() => {
      */
     const withSearchResults = (query, callback) => {
         const queryWords = splitAndIgnoreWords(query);
-        console.log(queryWords);
 
         ApplicationModule.withPosts(posts => callback(posts
             .map(p => {
@@ -117,6 +116,10 @@ const SearchModule = (() => {
                 resultsElement.removeChild(resultsElement.lastChild);
             }
 
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+
             // Get query from event
             const query = event.target.value;
 
@@ -127,14 +130,9 @@ const SearchModule = (() => {
                 return;
             }
 
-            // Debounce?
             // Hide/show spinner
             if (spinner.classList.contains("d-none")) {
                 spinner.classList.remove("d-none");
-            }
-
-            if (timeout) {
-                clearTimeout(timeout);
             }
 
             timeout = setTimeout(() => {
