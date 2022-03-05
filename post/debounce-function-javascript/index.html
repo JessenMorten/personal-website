@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="en"><head><!-- General--><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- SEO--><title>Improve performance by debouncing function calls | mortenjessen.dk</title><meta name="description" content="Debouncing can limit the number of calls to a function, thereby improving the performance of your website."><!-- Twitter SEO--><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Improve performance by debouncing function calls"><meta name="twitter:description" content="Debouncing can limit the number of calls to a function, thereby improving the performance of your website."><meta name="twitter:site" content="@mortenjessen5d"><meta name="twitter:image" content="https://mortenjessen.dk/images/lines.jpg"><!-- Stylesheets--><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/github.min.css"><link rel="stylesheet" href="https://mortenjessen.dk/style.css"><!-- Scripts--><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script><script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script></head><body><header class="fixed-top" id="tosp"><nav class="navbar navbar-light bg-white shadow"><div class="container"><a class="navbar-brand" href="https://mortenjessen.dk">mortenjessen.dk</a><a class="text-decoration-none" href="https://mortenjessen.dk/search/">Search</a></div></nav></header><main class="container my-5" id="top"><div class="py-3"><div class="row"><div class="mt-3 col-12 col-md-8 col-lg-9"><div class="bg-white shadow rounded"><img class="large-thumbnail" src="https://mortenjessen.dk/images/lines.jpg" alt="thumbnail"><div class="p-3"><h3>Improve performance by debouncing function calls</h3><h6 class="mb-2 text-muted">JavaScript</h6><p class="mb-2 text-muted">March 4, 2022</p><i><h6>Debouncing can limit the number of calls to a function, thereby improving the performance of your website.</h6></i><hr><p>The debounce function is a <a href="https://mortenjessen.dk/post/higher-order-functions-javascript">higher-order function</a>
+that is very similar to the throttle function.
+The function will wrap another function which will only be invoked, when we're sure that we wan't to invoke it.
+It does this by delaying the actual function invokation, for a specified amount of time.</p><h4>Usage example</h4><p>A good situation to use a debounce function, is when implementing an instant search feature,
+which will search while the user is typing. The problem with such a feature is that it might put
+too much load on the backend, if we trigger a new search request everytime the user inputs a character.
+Instead, the debounced search function will not send the search request until the user is done typing.
+See how it works in the example below:</p><div class="my-3 p-3 border border-primary rounded mx-auto shadow" style="max-width:500px"><h5>Debounced search example</h5><p id="search-status">Type something in the input element below.</p><input class="form-control" id="search-input" placeholder="Search..."></div><script>const searchStatusElement = document.getElementById("search-status");
+const searchInputElement = document.getElementById("search-input");
+function debounce(func, milliseconds) {
+    let timeout = null;
+    return function (...arguments) {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => func(...arguments), milliseconds);
+    }
+}
+function search(query) {
+    if ((query || "").trim() === "") {
+        searchStatusElement.textContent = "Type something in the input element below.";
+    } else {
+        searchStatusElement.textContent = `Searching for '${query}'`;
+    }
+}
+const debouncedSearch = debounce(search, 1000);
+searchInputElement.oninput = event => {
+    searchStatusElement.textContent = "Waiting until you're done typing...";
+    debouncedSearch(event.target.value);
+};</script><h4>Implementation</h4><pre class="rounded shadow border"><span class="float-left badge bg-secondary">Javascript</span><code class="language-javascript">// Elements
+const searchStatusElement = document.getElementById("search-status");
+const searchInputElement = document.getElementById("search-input");
+
+// Debounces a function.
+function debounce(func, milliseconds) {
+    let timeout = null;
+    return function (...arguments) {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => func(...arguments), milliseconds);
+    }
+}
+
+// Search function
+function search(query) {
+    if ((query || "").trim() === "") {
+        searchStatusElement.textContent = "Type something in the input element below.";
+    } else {
+        searchStatusElement.textContent = `Searching for '${query}'`;
+    }
+}
+
+// Wrap the search function with the debounce function
+const debouncedSearch = debounce(search, 1000);
+
+// Add event handler to search input
+searchInputElement.oninput = event => {
+    searchStatusElement.textContent = "Waiting until you're done typing...";
+    debouncedSearch(event.target.value);
+};</code></pre></div></div></div><div class="mt-3 col-12 col-md-4 col-lg-3"><div class="bg-white shadow rounded p-3"><h5 class="mb-3">Latest posts</h5><a href="https://mortenjessen.dk/post/debounce-function-javascript/"><p class="m-0 mt-2 py-2 border-top">Improve performance by debouncing function calls</p></a><a href="https://mortenjessen.dk/post/twitter-seo/"><p class="m-0 mt-2 py-2 border-top">Drive traffic to your website using these meta tags in your HTML</p></a><a href="https://mortenjessen.dk/post/memoize-function-javascript/"><p class="m-0 mt-2 py-2 border-top">Speed up your JavaScript functions with memoization!</p></a><a href="https://mortenjessen.dk/post/pure-function-javascript/"><p class="m-0 mt-2 py-2 border-top">What is a pure function?</p></a><a href="https://mortenjessen.dk/post/higher-order-functions-javascript/"><p class="m-0 mt-2 py-2 border-top">Higher-order functions in JavaScript</p></a></div></div></div></div></main><a class="btn btn-primary rounded position-fixed bottom-0 end-0 m-3" href="#top">To the top</a><script>const BASE_URL = "https://mortenjessen.dk";</script><script src="https://mortenjessen.dk/scripts/main.js"></script></body></html>
