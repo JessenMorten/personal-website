@@ -1,0 +1,49 @@
+<!DOCTYPE html><html lang="en"><head><!-- General--><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- SEO--><title>How to mimic the behavior of a semaphore using channels | mortenjessen.dk</title><meta name="description" content="Buffered channels has everything we need to build our own semaphore, which we can use to parallelize our Go applications."><!-- Twitter SEO--><meta name="twitter:card" content="summary"><meta name="twitter:title" content="How to mimic the behavior of a semaphore using channels"><meta name="twitter:description" content="Buffered channels has everything we need to build our own semaphore, which we can use to parallelize our Go applications."><meta name="twitter:site" content="@mortenjessen5d"><meta name="twitter:image" content="https://mortenjessen.dk/images/traffic.jpg"><!-- Stylesheets--><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/github.min.css"><link rel="stylesheet" href="https://mortenjessen.dk/style.css"><!-- Scripts--><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script><script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script></head><body><header class="fixed-top" id="tosp"><nav class="navbar navbar-light bg-white shadow"><div class="container"><a class="navbar-brand text-primary" href="https://mortenjessen.dk">mortenjessen.dk</a><a class="text-decoration-none" href="https://mortenjessen.dk/search/">Search</a></div></nav></header><main class="container my-5" id="top"><div class="py-3"><div class="row"><div class="mt-3 col-12 col-md-8 col-lg-9"><div class="bg-white shadow rounded"><img class="large-thumbnail" src="https://mortenjessen.dk/images/traffic.jpg" alt="thumbnail"><div class="p-3"><h3>How to mimic the behavior of a semaphore using channels</h3><h6 class="mb-2 text-muted">Go</h6><p class="mb-2 text-muted">April 3, 2022</p><i><h6>Buffered channels has everything we need to build our own semaphore, which we can use to parallelize our Go applications.</h6></i><hr><p>Let's just dig right in, but first a small disclaimer. If you intend to use this
+implementation in production, you should checkout the
+<code>golang.org/x/sync/semaphore</code>
+package, it may be a more suitable solution, depending on your needs.</p><p>The code pretty much speaks for itself, although I just want to highlight one thing.
+The "semaphore" in the code below is actually a buffered channel with the size of 2. This means that only 2 values can
+be in the buffer and if we try to add another value, the operation will block until a value has been read
+from the channel. This is what allows us to use the channel as a semaphore.</p><p>If we want to run more operations in parallel, the only thing we have to change
+is the size of the channel.</p><pre class="rounded shadow border"><span class="float-left badge bg-secondary">Go</span><code class="language-go">package main
+ 
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+ 
+func main() {
+	// We're using the wait group to keep track of
+	// how many of operations completed
+	var wg sync.WaitGroup
+	wg.Add(5)
+ 
+	// Making a buffered channel, with the size of 2, allowing only 2 operations to run at a time
+	var semaphore = make(chan int, 2)
+ 
+	for i := 0; i < 5; i++ {
+		// Acquire semaphore (actually adding an arbitrary value to the buffered channel)
+		semaphore <- 1
+ 
+		// Start the limited operation in a new goroutine
+		go func(id int) {
+			operation(id)
+ 
+			// Mark operation as done
+			wg.Done()
+ 
+			// Release semaphore (actually reading a value from the buffered channel)
+			<-semaphore
+		}(i)
+	}
+ 
+	// Waiting for all operations to complete
+	wg.Wait()
+}
+ 
+func operation(id int) {
+	fmt.Printf("#%d is working...\n", id)
+	time.Sleep(5 * time.Second)
+	fmt.Printf("#%d is done!\n", id)
+}</code></pre></div></div></div><div class="mt-3 col-12 col-md-4 col-lg-3"><div class="bg-white shadow rounded p-3"><h5 class="mb-3">Latest posts</h5><a href="https://mortenjessen.dk/post/using-channels-as-semaphores/"><p class="m-0 mt-2 py-2 border-top">How to mimic the behavior of a semaphore using channels</p></a><a href="https://mortenjessen.dk/post/detect-dark-mode/"><p class="m-0 mt-2 py-2 border-top">Detect dark mode with JavaScript</p></a><a href="https://mortenjessen.dk/post/throttle-function-javascript/"><p class="m-0 mt-2 py-2 border-top">Throttle function calls in JavaScript</p></a><a href="https://mortenjessen.dk/post/debounce-function-javascript/"><p class="m-0 mt-2 py-2 border-top">Improve performance with the debounce function</p></a><a href="https://mortenjessen.dk/post/twitter-seo/"><p class="m-0 mt-2 py-2 border-top">Drive traffic to your website using these meta tags in your HTML</p></a><a href="https://mortenjessen.dk/post/memoize-function-javascript/"><p class="m-0 mt-2 py-2 border-top">Speed up your JavaScript functions with memoization!</p></a><a href="https://mortenjessen.dk/post/pure-function-javascript/"><p class="m-0 mt-2 py-2 border-top">What is a pure function?</p></a><a href="https://mortenjessen.dk/post/higher-order-functions-javascript/"><p class="m-0 mt-2 py-2 border-top">Higher-order functions in JavaScript</p></a></div></div></div></div></main><a class="btn btn-primary rounded position-fixed bottom-0 end-0 m-3" href="#top">To the top</a><script>const BASE_URL = "https://mortenjessen.dk";</script><script src="https://mortenjessen.dk/scripts/main.js"></script></body></html>
